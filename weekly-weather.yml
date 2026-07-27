@@ -2,17 +2,17 @@ name: Daily Weather Channel Post
 
 # NOTE: this file must live at .github/workflows/weekly-weather.yml in your
 # repo for GitHub Actions to pick it up - move it there after adding to git.
-# (Filename/job name still say "weekly" for historical reasons - only the
-# schedule below actually changed to run every day.)
+# (Filename/job name still say "weekly" for historical reasons.)
+#
+# This workflow has NO `schedule:` trigger. GitHub's native cron scheduler
+# turned out to be unreliable for this job - real runs landed 70-90+ minutes
+# late, multiple days in a row (see "Setting up the daily trigger" in the
+# guide for the full diagnosis). Instead, an external scheduler (cron-job.org)
+# calls the `workflow_dispatch` trigger below via GitHub's REST API at
+# exactly 6:30 AM every day - see the guide for full setup steps.
 
 on:
-  schedule:
-    # 6:30 AM in the America/Toronto timezone, every day. GitHub Actions
-    # handles the EDT/EST switch automatically with an explicit timezone
-    # set - no manual UTC math or twice-a-year cron edits needed.
-    - cron: "30 6 * * *"
-      timezone: "America/Toronto"
-  workflow_dispatch: {} # lets you trigger a manual test run from the Actions tab
+  workflow_dispatch: {} # triggered by the external scheduler daily, or manually from the Actions tab for testing
 
 jobs:
   send-weather:
